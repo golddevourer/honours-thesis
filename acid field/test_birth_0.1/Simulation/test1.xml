@@ -1,0 +1,120 @@
+<CompuCell3D Revision="2" Version="4.5.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="400" y="200" z="1"/>
+      <Steps>20000</Steps>
+      <Temperature>30.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="type1"/>
+      <CellType TypeId="2" TypeName="type2"/>
+   </Plugin>
+   
+<Plugin Name="Volume">
+</Plugin>
+
+<Plugin Name="Surface">
+   <SurfaceEnergyParameters CellType="type1" LambdaSurface="0.5" TargetSurface="0"/>
+   <SurfaceEnergyParameters CellType="type2" LambdaSurface="0.5" TargetSurface="0"/>
+</Plugin>
+
+   <Plugin Name="PixelTracker">
+   
+   <!-- Module tracking pixels of each cell -->
+   </Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">-10.0</Energy>
+      <Energy Type1="Medium" Type2="type1">-10.0</Energy>
+      <Energy Type1="Medium" Type2="type2">-10.0</Energy>
+      <Energy Type1="type1" Type2="type1">-10.0</Energy>
+      <Energy Type1="type1" Type2="type2">-10.0</Energy>
+      <Energy Type1="type2" Type2="type2">-10.0</Energy>
+      <NeighborOrder>2</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="UniformInitializer">
+      
+      <!-- Initial layout of cells in the form of rectangular slab -->
+      <Region>
+         <BoxMin x="0" y="0" z="0"/>
+         <BoxMax x="200" y="200" z="1"/>
+         <Gap>0</Gap>
+         <Width>10</Width>
+         <Types>type1</Types>
+      </Region>
+      <Region>
+         <BoxMin x="201" y="0" z="0"/>
+         <BoxMax x="400" y="200" z="1"/>
+         <Gap>0</Gap>
+         <Width>10</Width>
+         <Types>type2</Types>
+      </Region>
+   </Steppable>
+   
+<Steppable Type="DiffusionSolverFE">
+   
+   <!-- Specification of PDE solvers -->
+   <DiffusionField Name="ACID">
+      <DiffusionData>
+         <FieldName>ACID</FieldName>
+         <GlobalDiffusionConstant>0.8</GlobalDiffusionConstant>
+         <GlobalDecayConstant>0.0001</GlobalDecayConstant>
+         <!-- Additional options are: -->
+         <!-- <InitialConcentrationExpression>x*y</InitialConcentrationExpression> -->
+         <!-- <ConcentrationFileName>INITIAL CONCENTRATION FIELD - typically a file with path Simulation/NAME_OF_THE_FILE.txt</ConcentrationFileName> -->
+      </DiffusionData>
+      <SecretionData>
+         <!-- When secretion is defined inside DissufionSolverFE all secretion constants are scaled automaticaly to account for the extra calls to the diffusion step when handling large diffusion constants -->
+         
+         <!-- Uniform secretion Definition -->
+         <Secretion Type="type1">0.1</Secretion>
+         <!-- <SecretionOnContact SecreteOnContactWith="type1,type2" Type="type2">0.2</SecretionOnContact> -->
+         <!-- <ConstantConcentration Type="type2">0.1</ConstantConcentration> -->
+      </SecretionData>
+      <BoundaryConditions>
+         <Plane Axis="X">
+            <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+            <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            <!-- Other options are (examples): -->
+            <!-- <Periodic/> -->
+            <!-- <ConstantValue PlanePosition="Min" Value="1.0"/> -->
+         </Plane>
+         <Plane Axis="Y">
+            <ConstantDerivative PlanePosition="Min" Value="0.0"/>
+            <ConstantDerivative PlanePosition="Max" Value="0.0"/>
+            <!-- Other options are (examples): -->
+            <!-- <Periodic/> -->
+            <!-- <ConstantValue PlanePosition="Min" Value="1.0"/> -->
+         </Plane>
+      </BoundaryConditions>
+   </DiffusionField>
+</Steppable>
+
+</CompuCell3D>
