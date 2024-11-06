@@ -1,0 +1,80 @@
+<CompuCell3D Revision="2" Version="4.5.0">
+   
+   <Metadata>
+      
+      <!-- Basic properties simulation -->
+      <NumberOfProcessors>1</NumberOfProcessors>
+      <DebugOutputFrequency>10</DebugOutputFrequency>
+      <!-- <NonParallelModule Name="Potts"/> -->
+   </Metadata>
+   
+   <Potts>
+      
+      <!-- Basic properties of CPM (GGH) algorithm -->
+      <Dimensions x="600" y="300" z="1"/>
+      <Steps>6000</Steps>
+      <Temperature>30.0</Temperature>
+      <NeighborOrder>1</NeighborOrder>
+   </Potts>
+
+   <Plugin Name="CellType">
+      
+      <!-- Listing all cell types in the simulation -->
+      <CellType TypeId="0" TypeName="Medium"/>
+      <CellType TypeId="1" TypeName="type1"/>
+      <CellType TypeId="2" TypeName="type2"/>
+   </Plugin>
+   
+<Plugin Name="Volume">
+</Plugin>
+
+<Plugin Name="Surface">
+   <SurfaceEnergyParameters CellType="type1" LambdaSurface="0.5" TargetSurface="0"/>
+   <SurfaceEnergyParameters CellType="type2" LambdaSurface="0.5" TargetSurface="0"/>
+</Plugin>
+
+   <Plugin Name="PixelTracker">
+   
+   <!-- Module tracking pixels of each cell -->
+   </Plugin>
+   
+   <Plugin Name="CenterOfMass">
+      
+      <!-- Module tracking center of mass of each cell -->
+   </Plugin>
+   
+   <Plugin Name="NeighborTracker">
+      
+      <!-- Module tracking neighboring cells of each cell -->
+   </Plugin>
+   
+   <Plugin Name="Contact">
+      <!-- Specification of adhesion energies -->
+      <Energy Type1="Medium" Type2="Medium">-10.0</Energy>
+      <Energy Type1="Medium" Type2="type1">-10.0</Energy>
+      <Energy Type1="Medium" Type2="type2">-10.0</Energy>
+      <Energy Type1="type1" Type2="type1">-10.0</Energy>
+      <Energy Type1="type1" Type2="type2">-10.0</Energy>
+      <Energy Type1="type2" Type2="type2">-10.0</Energy>
+      <NeighborOrder>2</NeighborOrder>
+   </Plugin>
+   
+   <Steppable Type="UniformInitializer">
+      
+      <!-- Initial layout of cells in the form of rectangular slab -->
+      <Region>
+         <BoxMin x="0" y="0" z="0"/>
+         <BoxMax x="300" y="300" z="1"/>
+         <Gap>0</Gap>
+         <Width>10</Width>
+         <Types>type1</Types>
+      </Region>
+      <Region>
+         <BoxMin x="301" y="0" z="0"/>
+         <BoxMax x="600" y="300" z="1"/>
+         <Gap>0</Gap>
+         <Width>10</Width>
+         <Types>type2</Types>
+      </Region>
+   </Steppable>
+</CompuCell3D>

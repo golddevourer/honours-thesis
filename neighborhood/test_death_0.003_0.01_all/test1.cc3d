@@ -1,0 +1,5 @@
+<Simulation version="4.5.0">
+   <XMLScript Type="XMLScript">Simulation/test1.xml</XMLScript>
+   <PythonScript Type="PythonScript">Simulation/test1.py</PythonScript>
+   <Resource Type="Python">Simulation/test1Steppables.py</Resource>
+</Simulation>
